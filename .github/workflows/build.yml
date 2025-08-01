@@ -36,10 +36,10 @@ jobs:
       - run: mkdir build && cd build
       - if: matrix.os == 'windows-latest'
         working-directory: build
-        run: cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_HWLOC=ON -DWITH_TLS=ON -DWITH_OPENCL=OFF -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
+        run: cmake .. -DCMAKE_BUILD_TYPE=Release
       - if: matrix.os != 'windows-latest'
         working-directory: build
-        run: cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_HWLOC=ON -DWITH_TLS=ON -DWITH_OPENCL=OFF
+        run: cmake .. -DCMAKE_BUILD_TYPE=Release
       - working-directory: build
         run: cmake --build . --config Release --parallel $(nproc || sysctl -n hw.logicalcpu || echo 4)
         
