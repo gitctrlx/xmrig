@@ -26,14 +26,17 @@ jobs:
       - if: matrix.os == 'macos-latest'
         run: brew install hwloc libuv
       - if: matrix.os == 'windows-latest'
-        name: Clone xmrig-deps
-        run: git clone https://github.com/xmrig/xmrig-deps.git deps
+        name: Checkout xmrig-deps
+        uses: actions/checkout@v4
+        with:
+          repository: xmrig/xmrig-deps
+          path: deps
 
       - run: mkdir build && cd build
       - if: matrix.os == 'windows-latest'
         working-directory: build
         run: |
-          cmake .. -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 17 2022" -A x64 -DXMRIG_DEPS=c:\xmrig-deps\msvc2022\x64
+          cmake .. -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 17 2022" -A x64 -DXMRIG_DEPS=./deps/msvc2022/x64
       - if: matrix.os != 'windows-latest'
         working-directory: build
         run: cmake .. -DCMAKE_BUILD_TYPE=Release
