@@ -26,29 +26,19 @@ jobs:
       - if: matrix.os == 'macos-latest'
         run: brew install hwloc libuv
       - if: matrix.os == 'windows-latest'
-        run: vcpkg install hwloc:x64-windows libuv:x64-windows
-      - if: matrix.os == 'windows-latest'
-        name: Cache vcpkg installed
-        uses: actions/cache@v4
-        with:
-          path: C:\vcpkg\installed
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
-          restore-keys: ${{ runner.os }}-vcpkg-
+        name: Clone xmrig-deps
+        run: git clone https://github.com/xmrig/xmrig-deps.git deps
 
       - run: mkdir build && cd build
       - if: matrix.os == 'windows-latest'
         working-directory: build
         run: |
-          cmake .. -DCMAKE_BUILD_TYPE=Release ^
-             -DUV_INCLUDE_DIR=C:\vcpkg\installed\x64-windows\include ^
-             -DUV_LIBRARY=C:\vcpkg\installed\x64-windows\lib\libuv.lib ^
-             -DHWLOC_INCLUDE_DIR=C:\vcpkg\installed\x64-windows\include ^
-             -DHWLOC_LIBRARY=C:\vcpkg\installed\x64-windows\lib\hwloc.lib
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DXMRIG_DEPS=../deps/msvc2022/x64
       - if: matrix.os != 'windows-latest'
         working-directory: build
         run: cmake .. -DCMAKE_BUILD_TYPE=Release
       - working-directory: build
-        run: cmake --build . --config Release --parallel $(nproc || sysctl -n hw.logicalcpu || echo 4)
+        run: cmake --build . --config Release --parallel
         
       - uses: actions/upload-artifact@v4
         with:
