@@ -42,8 +42,17 @@ jobs:
         run: cmake .. -DCMAKE_BUILD_TYPE=Release
       - working-directory: build
         run: cmake --build . --config Release --parallel
+
+      - name: Test XMRig
+        working-directory: build
+        run: |
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            if exist Release\xmrig.exe (Release\xmrig.exe --version) else (echo "xmrig.exe not found in Release" && exit 1)
+          else
+            if [ -f xmrig ]; then ./xmrig --version; else echo "xmrig not found" && exit 1; fi
+          fi
         
       - uses: actions/upload-artifact@v4
         with:
-          name: xmrig-${{ matrix.os }}
-          path: build/xmrig*
+          name: xmrig-build-${{ matrix.os }}
+          path: build/
